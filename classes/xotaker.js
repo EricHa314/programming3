@@ -1,3 +1,4 @@
+'use strict';
 var Creature = require("./class.creature.js");
 
 module.exports = class Xotaker  extends Creature{
@@ -12,7 +13,7 @@ module.exports = class Xotaker  extends Creature{
     }
 
     sharjvel() {
-        var vand = random(this.yntrelVandak(0));
+        var vand = this.yntrelVandak(0)[Math.round(Math.random() * this.yntrelVandak(0).length)];
         if (vand && this.multiply >= this.speed / 4) {
             this.energy--;
             matrix[this.y][this.x] = 0;
@@ -25,7 +26,7 @@ module.exports = class Xotaker  extends Creature{
     utel() {
         this.energy--;
         this.multiply++;
-        var vand = random(this.yntrelVandak(1));
+        var vand = this.yntrelVandak(1)[Math.round(Math.random() * this.yntrelVandak(1).length)];
         if (vand && this.multiply >= this.speed / 4) {
             this.energy += this.speed;
             matrix[this.y][this.x] = 0;
@@ -42,7 +43,7 @@ module.exports = class Xotaker  extends Creature{
     }
 
     bazmanal() {
-        var vand = random(this.yntrelVandak(0));
+        var vand = this.yntrelVandak(0)[Math.round(Math.random() * this.yntrelVandak(0).length)];
         if (vand && this.energy >= this.speed) {
             this.energy = 1;
             var newxotaker = new Xotaker(vand[0], vand[1], 2);

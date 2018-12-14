@@ -23,13 +23,15 @@ function genMatrix(w, h) {
     return matrix;
 }
 
- matrix = [];
+matrix = [];
 var w = 30;
 var h = 30;
- grassArr = [], xotakerArr = [], gishatichArr = [];
+grassArr = [], xotakerArr = [], gishatichArr = [];
 
 matrix = genMatrix(w, h);
+
 var Grass = require("./classes/grass.js");
+
 var Xotaker = require("./classes/xotaker.js");
 var Gishatich = require("./classes/gishatich.js");
 
@@ -50,21 +52,21 @@ for(var y in matrix) {
 
 function drawInServer() {
     for(var i in grassArr) {
-        grassArr[i].mul();
+       grassArr[i].mul();
     }
 
     for(var i in xotakerArr) {
-        xotakerArr[i].bazmanal();
-        xotakerArr[i].utel();
-        xotakerArr[i].mahanal();
+       xotakerArr[i].utel();
+       xotakerArr[i].mahanal();
     }
 
     for(var i in gishatichArr) {
-        gishatichArr[i].bazmanal();
-        gishatichArr[i].utel();
-        gishatichArr[i].mahanal();
+       gishatichArr[i].bazmanal();
+       gishatichArr[i].utel();
+       gishatichArr[i].mahanal();
     }
 
 }
+
 
 setInterval(drawInServer, 1000);
