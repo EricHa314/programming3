@@ -9,7 +9,7 @@ module.exports = class Grass extends Creature{
 
     mul() {
         this.multiply++;
-        this.direction = this.yntrelVandak(0)[Math.round(Math.random() * this.yntrelVandak(0).length)];//random(this.yntrelVandak(0));
+        this.direction = this.yntrelVandak(0)[Math.floor(Math.random() * this.yntrelVandak(0).length)];//random(this.yntrelVandak(0));
         if (this.multiply >= this.speed && this.direction) {
             var newGrass = new Grass(this.direction[0], this.direction[1], this.index);
             newGrass.parentX = this.x;

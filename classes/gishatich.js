@@ -15,7 +15,7 @@ module.exports = class Gishatich  extends Creature{
     }
 
     sharjvel() {
-        var vand = this.yntrelVandak(0)[Math.round(Math.random() * this.yntrelVandak(0).length)];
+        var vand = this.yntrelVandak(0)[Math.floor(Math.random() * this.yntrelVandak(0).length)];
         if (vand && this.multiply >= this.speed / 2) {
             this.energy--;
             matrix[this.y][this.x] = 0;
@@ -26,7 +26,7 @@ module.exports = class Gishatich  extends Creature{
 
     utel() {
         this.energy--;
-        var vand = this.yntrelVandak(2)[Math.round(Math.random() * this.yntrelVandak(2).length)];
+        var vand = this.yntrelVandak(2)[Math.floor(Math.random() * this.yntrelVandak(2).length)];
         if (vand && this.multiply >= this.speed / 2) {
             this.energy += this.speed/2;
             matrix[this.y][this.x] = 0;
@@ -42,7 +42,7 @@ module.exports = class Gishatich  extends Creature{
     }
 
     bazmanal() {
-        var vand = this.yntrelVandak(0)[Math.round(Math.random() * this.yntrelVandak(0).length)];
+        var vand = this.yntrelVandak(0)[Math.floor(Math.random() * this.yntrelVandak(0).length)];
         if (vand && this.energy >= this.speed) {
             this.energy = 1;
             var newgishatich = new Gishatich(vand[0], vand[1], 3);

@@ -13,7 +13,7 @@ module.exports = class Xotaker  extends Creature{
     }
 
     sharjvel() {
-        var vand = this.yntrelVandak(0)[Math.round(Math.random() * this.yntrelVandak(0).length)];
+        var vand = this.yntrelVandak(0)[Math.floor(Math.random() * this.yntrelVandak(0).length)];
         if (vand && this.multiply >= this.speed / 4) {
             this.energy--;
             matrix[this.y][this.x] = 0;
@@ -43,7 +43,7 @@ module.exports = class Xotaker  extends Creature{
     }
 
     bazmanal() {
-        var vand = this.yntrelVandak(0)[Math.round(Math.random() * this.yntrelVandak(0).length)];
+        var vand = this.yntrelVandak(0)[Math.floor(Math.random() * this.yntrelVandak(0).length)];
         if (vand && this.energy >= this.speed) {
             this.energy = 1;
             var newxotaker = new Xotaker(vand[0], vand[1], 2);

@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
+var io = require('socket.io')(server);
 
 app.use(express.static("."));
 app.get('/', function (req, res) {
@@ -26,6 +27,8 @@ function genMatrix(w, h) {
 matrix = [];
 var w = 30;
 var h = 30;
+io.sockets.emit('cellw', w);
+io.sockets.emit('cellh', h);
 grassArr = [], xotakerArr = [], gishatichArr = [];
 
 matrix = genMatrix(w, h);
@@ -65,8 +68,7 @@ function drawInServer() {
        gishatichArr[i].utel();
        gishatichArr[i].mahanal();
     }
-
+    io.sockets.emit("matrix", matrix);
 }
-
 
 setInterval(drawInServer, 1000);
