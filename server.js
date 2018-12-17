@@ -30,11 +30,8 @@ var h = 30;
 io.sockets.emit('cellw', w);
 io.sockets.emit('cellh', h);
 grassArr = [], xotakerArr = [], gishatichArr = [];
-
 matrix = genMatrix(w, h);
-
 var Grass = require("./classes/grass.js");
-
 var Xotaker = require("./classes/xotaker.js");
 var Gishatich = require("./classes/gishatich.js");
 
@@ -52,8 +49,36 @@ for(var y in matrix) {
     }
 }
 
+var tact=0;
+var season;
+
+function spring(){
+    season="spring";
+}
+
+function summer(){
+    season="summer";
+}
+
+function autumn(){
+    season="autumn";
+}
+
+function winter(){
+    season="winter";
+}
 
 function drawInServer() {
+    console.log(tact);
+    if(tact%40>=0 && tact%40<10)
+        spring();
+    else if(tact%40>=10 && tact%40<20)
+        summer();
+    else if(tact%40>=20 && tact%40<30)
+        autumn();
+    else
+        winter();
+    
     for(var i in grassArr) {
        grassArr[i].mul();
     }
@@ -68,7 +93,10 @@ function drawInServer() {
        gishatichArr[i].utel();
        gishatichArr[i].mahanal();
     }
+
+    io.sockets.emit("season", season);
     io.sockets.emit("matrix", matrix);
+    tact++;
 }
 
 setInterval(drawInServer, 1000);
