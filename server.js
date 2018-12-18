@@ -34,6 +34,8 @@ matrix = genMatrix(w, h);
 var Grass = require("./classes/grass.js");
 var Xotaker = require("./classes/xotaker.js");
 var Gishatich = require("./classes/gishatich.js");
+var tact=0;
+var season;
 
 for(var y in matrix) {
     for(var x in matrix[y]) {
@@ -49,8 +51,41 @@ for(var y in matrix) {
     }
 }
 
-var tact=0;
-var season;
+io.on('connection', function (socket) {
+    socket.on("clickCordinat", function(c){
+        x = c[0];
+        y = c[1];
+        if(matrix[y][x]==2)
+        {
+            for (var i in xotakerArr) {
+                if (xotakerArr[i].x == this.x && xotakerArr[i].y == this.y) {
+                    xotakerArr.splice(i, 1);
+                }
+            }
+        }
+        else if(matrix[y][x]==1)
+        {
+            for (var i in grassArr) {
+                if (grassArr[i].x == this.x && grassArr[i].y == this.y) {
+                    grassArr.splice(i, 1);
+                }
+            }
+        }
+        else if(matrix[y][x]==3)
+        {
+            for (var i in gishatichArr) {
+                if (gishatichArr[i].x == this.x && gishatichArr[i].y == this.y) {
+                    gishatichArr.splice(i, 1);
+                }
+            }
+        }
+        
+        matrix[y][x] = 2;
+        xotakerArr.push(new Xotaker(x*1, y*1, 2));
+    });
+ });
+
+
 
 function spring(){
     season="spring";
