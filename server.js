@@ -58,7 +58,7 @@ io.on('connection', function (socket) {
         x = c[0];
         y = c[1];
         if (c[4] == "keypress") {
-            if (c[2] == "G" || c[2] == "X" || c[2] == "D") {
+            if (c[2] == "G" || c[2] == "X" || c[2] == "A" || c[2] == "D") {
                 if (matrix[y][x] == 2) {
                     for (var i in xotakerArr) {
                         if (xotakerArr[i].x == this.x && xotakerArr[i].y == this.y) {
@@ -92,10 +92,10 @@ io.on('connection', function (socket) {
                     matrix[y][x] = 3;
                     gishatichArr.push(new Gishatich(x * 1, y * 1, 3));
                 }
-                // else if (c[2] == "A") {
-                //     matrix[y][x] = 1;
-                //     grassArr.push(new Grass(x * 1, y * 1, 1));
-                // }
+                else if (c[2] == "A") {
+                    matrix[y][x] = 1;
+                    grassArr.push(new Grass(x * 1, y * 1, 1));
+                }
                 else if (c[2] = "D") {
                     matrix[y][x] = 0;
                 }
