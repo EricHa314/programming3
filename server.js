@@ -37,7 +37,7 @@ var Gishatich = require("./classes/gishatich.js");
 var tact = 0;
 var season;
 var man = false;
-var man_x, man_y;
+// var man_x, man_y;
 
 for (var y in matrix) {
     for (var x in matrix[y]) {
@@ -101,24 +101,24 @@ io.on('connection', function (socket) {
                 }
             }
 
-            if (man == "true") {
-                // x = man_x;
-                // y = man_y;
-                // matrix[y][x] = 0;
-                // if (c[3] == 38) {
-                //     x--;
-                // }
-                // else if (c[3] == 40) {
-                //     x++;
-                // }
-                // else if (c[3] == 39) {
-                //     y++
-                // }
-                // else if (c[3] == 37) {
-                //     y--;
-                // }
-                // matrix[y][x] = 4;
-            }
+            // if (man == "true") {
+            //     x = man_x;
+            //     y = man_y;
+            //     matrix[y][x] = 0;
+            //     if (c[3] == 38) {
+            //         x--;
+            //     }
+            //     else if (c[3] == 40) {
+            //         x++;
+            //     }
+            //     else if (c[3] == 39) {
+            //         y++
+            //     }
+            //     else if (c[3] == 37) {
+            //         y--;
+            //     }
+            //     matrix[y][x] = 4;
+            // }
         }
         else if (c[4] == "click") {
             if (man == false) {
@@ -149,8 +149,8 @@ io.on('connection', function (socket) {
 
                 matrix[y][x] = 4;
                 man = true;
-                man_x = x;
-                man_y = y;
+                // man_x = x;
+                // man_y = y;
             }
         }
     });
