@@ -1,20 +1,20 @@
 var side = 24;
 var socket = io();
-var w=30, h=30;
+var w = 30, h = 30;
 socket.on("season", sezon);
 var backgroundcolor = "#acacac";
-var x,y;
+var x, y;
 
-function sezon(season){
+function sezon(season) {
     console.log(season);
-     if(season=="spring")
+    if (season == "spring")
         backgroundcolor = "#99ff66";
-    else if(season=="summer")
-        backgroundcolor="#ffff99";
-    else if(season=="autumn")
-        backgroundcolor="#ffb366";
-    else if(season=="winter")
-        backgroundcolor="white";
+    else if (season == "summer")
+        backgroundcolor = "#ffff99";
+    else if (season == "autumn")
+        backgroundcolor = "#ffb366";
+    else if (season == "winter")
+        backgroundcolor = "white";
 }
 
 function setup() {
@@ -22,19 +22,33 @@ function setup() {
     background(backgroundcolor);
 }
 
-function mousePressed() {
-    var cordinates=[];
-    console.log(mouseX, mouseY);
-    if(mouseX%side!=0 && mouseY%side!=0)
-    {
-        x = Math.floor(mouseX/side);
-        y= Math.floor(mouseY/side);
+function keyPressed() {
+    var cordinates = [];
+    if (mouseX % side != 0 && mouseY % side != 0) {
+        x = Math.floor(mouseX / side);
+        y = Math.floor(mouseY / side);
     }
-    cordinates[0]=x;
-    cordinates[1]=y;
-    socket.emit("clickCordinat", cordinates);
- }
- 
+    cordinates[0] = x;
+    cordinates[1] = y;
+    cordinates[2] = key;
+    cordinates[3] = key.code;
+    cordinates[4] = "keypress";
+    socket.emit("eventCordinat", cordinates);
+}
+
+
+function mousePressed() {
+    var cordinates = [];
+    if (mouseX % side != 0 && mouseY % side != 0) {
+        x = Math.floor(mouseX / side);
+        y = Math.floor(mouseY / side);
+    }
+    cordinates[0] = x;
+    cordinates[1] = y;
+    cordinates[4] = "click";
+    socket.emit("eventCordinat", cordinates);
+}
+
 function drawMatrix(matrix) {
     for (y in matrix) {
         for (x in matrix[y]) {
@@ -50,7 +64,10 @@ function drawMatrix(matrix) {
             else if (matrix[y][x] == 3) {
                 fill("red");
             }
-           rect(x * side, y * side, side, side);  
+            else if (matrix[y][x] == 4) {
+                fill("black");
+            }
+            rect(x * side, y * side, side, side);
         }
     }
 }
