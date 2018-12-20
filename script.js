@@ -28,11 +28,12 @@ function keyPressed() {
         x = Math.floor(mouseX / side);
         y = Math.floor(mouseY / side);
     }
-    cordinates[0] = x;
-    cordinates[1] = y;
-    cordinates[2] = key;
-    cordinates[3] = key.code;
-    cordinates[4] = "keypress";
+
+    cordinates[0] = "keypress";
+    cordinates[1] = x;
+    cordinates[2] = y;
+    cordinates[3] = key;
+    cordinates[4] = keyCode;  
     socket.emit("eventCordinat", cordinates);
 }
 
@@ -43,9 +44,10 @@ function mousePressed() {
         x = Math.floor(mouseX / side);
         y = Math.floor(mouseY / side);
     }
-    cordinates[0] = x;
-    cordinates[1] = y;
-    cordinates[4] = "click";
+    
+    cordinates[0] = "click";
+    cordinates[1] = x;
+    cordinates[2] = y;
     socket.emit("eventCordinat", cordinates);
 }
 

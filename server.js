@@ -37,7 +37,11 @@ var Gishatich = require("./classes/gishatich.js");
 var tact = 0;
 var season;
 var man = false;
-// var man_x, man_y;
+var man_x, man_y;
+var add_xotaker = 0;
+var add_gishatich = 0;
+var add_grass = 0;
+var add_del = 0;
 
 for (var y in matrix) {
     for (var x in matrix[y]) {
@@ -55,10 +59,10 @@ for (var y in matrix) {
 
 io.on('connection', function (socket) {
     socket.on("eventCordinat", function (c) {
-        x = c[0];
-        y = c[1];
-        if (c[4] == "keypress") {
-            if (c[2] == "G" || c[2] == "X" || c[2] == "A" || c[2] == "D") {
+        x = c[1];
+        y = c[2];
+        if (c[0] == "keypress") {
+            if (c[3] == "G" || c[3] == "X" || c[3] == "A" || c[3] == "D") {
                 if (matrix[y][x] == 2) {
                     for (var i in xotakerArr) {
                         if (xotakerArr[i].x == this.x && xotakerArr[i].y == this.y) {
@@ -84,74 +88,115 @@ io.on('connection', function (socket) {
                     man = false;
                 }
 
-                if (c[2] == "X") {
+                if (c[3] == "X") {
                     matrix[y][x] = 2;
                     xotakerArr.push(new Xotaker(x * 1, y * 1, 2));
+                    add_xotaker++;
                 }
-                else if (c[2] == "G") {
+                else if (c[3] == "G") {
                     matrix[y][x] = 3;
                     gishatichArr.push(new Gishatich(x * 1, y * 1, 3));
+                    add_gishatich++;
                 }
-                else if (c[2] == "A") {
+                else if (c[3] == "A") {
                     matrix[y][x] = 1;
                     grassArr.push(new Grass(x * 1, y * 1, 1));
+                    add_grass++;
                 }
-                else if (c[2] = "D") {
+                else if (c[3] = "D") {
                     matrix[y][x] = 0;
+                    add_del++;
                 }
             }
 
-            // if (man == "true") {
-            //     x = man_x;
-            //     y = man_y;
-            //     matrix[y][x] = 0;
-            //     if (c[3] == 38) {
-            //         x--;
-            //     }
-            //     else if (c[3] == 40) {
-            //         x++;
-            //     }
-            //     else if (c[3] == 39) {
-            //         y++
-            //     }
-            //     else if (c[3] == 37) {
-            //         y--;
-            //     }
-            //     matrix[y][x] = 4;
-            // }
+            if (c[4] == 37 || c[4] == 38 || c[4] == 39 || c[4] == 40) {
+                if (man == true) {
+                    x = man_x;
+                    y = man_y;
+                    matrix[y][x] = 0;
+                    if (c[4] == 38) {
+                        if (y > 0) {
+                            y--;
+                        }
+                    }
+                    else if (c[4] == 40) {
+                        if (y < h-1) {
+                            y++;
+                        }
+                    }
+                    else if (c[4] == 39) {
+                        if (x < w-1) {
+                            x++;
+                        }
+                    }
+                    else if (c[4] == 37) {
+                        if (x > 0) {
+                            x--;
+                        }
+                    }
+
+                    if (matrix[y][x] == 2) {
+                        for (var i in xotakerArr) {
+                            if (xotakerArr[i].x == this.x && xotakerArr[i].y == this.y) {
+                                xotakerArr.splice(i, 1);
+                            }
+                        }
+                    }
+                    else if (matrix[y][x] == 1) {
+                        for (var i in grassArr) {
+                            if (grassArr[i].x == this.x && grassArr[i].y == this.y) {
+                                grassArr.splice(i, 1);
+                            }
+                        }
+                    }
+                    else if (matrix[y][x] == 3) {
+                        for (var i in gishatichArr) {
+                            if (gishatichArr[i].x == this.x && gishatichArr[i].y == this.y) {
+                                gishatichArr.splice(i, 1);
+                            }
+                        }
+                    }
+
+                    matrix[y][x] = 4;
+                    man_x = x;
+                    man_y = y;
+                }
+            }
         }
-        else if (c[4] == "click") {
-            if (man == false) {
-                x = c[0];
-                y = c[1];
 
-                if (matrix[y][x] == 2) {
-                    for (var i in xotakerArr) {
-                        if (xotakerArr[i].x == this.x && xotakerArr[i].y == this.y) {
-                            xotakerArr.splice(i, 1);
-                        }
-                    }
-                }
-                else if (matrix[y][x] == 1) {
-                    for (var i in grassArr) {
-                        if (grassArr[i].x == this.x && grassArr[i].y == this.y) {
-                            grassArr.splice(i, 1);
-                        }
-                    }
-                }
-                else if (matrix[y][x] == 3) {
-                    for (var i in gishatichArr) {
-                        if (gishatichArr[i].x == this.x && gishatichArr[i].y == this.y) {
-                            gishatichArr.splice(i, 1);
-                        }
-                    }
-                }
-
-                matrix[y][x] = 4;
-                man = true;
-                // man_x = x;
-                // man_y = y;
+        else if (c[0] == "click") {
+            if (man == true) {
+                matrix[man_y][man_x] = 0;
             }
+            x = c[1];
+            y = c[2];
+
+            if (matrix[y][x] == 2) {
+                for (var i in xotakerArr) {
+                    if (xotakerArr[i].x == this.x && xotakerArr[i].y == this.y) {
+                        xotakerArr.splice(i, 1);
+                    }
+                }
+            }
+            else if (matrix[y][x] == 1) {
+                for (var i in grassArr) {
+                    if (grassArr[i].x == this.x && grassArr[i].y == this.y) {
+                        grassArr.splice(i, 1);
+                    }
+                }
+            }
+            else if (matrix[y][x] == 3) {
+                for (var i in gishatichArr) {
+                    if (gishatichArr[i].x == this.x && gishatichArr[i].y == this.y) {
+                        gishatichArr.splice(i, 1);
+                    }
+                }
+            }
+
+            matrix[y][x] = 4;
+            man = true;
+            man_x = x;
+            man_y = y;
         }
     });
 });
