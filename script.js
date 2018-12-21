@@ -4,6 +4,10 @@ var w = 30, h = 30;
 socket.on("season", sezon);
 var backgroundcolor = "#acacac";
 var x, y;
+var clicked = false;
+var pers;
+socket.on("persNum", function (x) { pers = x; });
+socket.on("no-pers", function () { clicked = false });
 
 function sezon(season) {
     console.log(season);
@@ -23,32 +27,28 @@ function setup() {
 }
 
 function keyPressed() {
-    var cordinates = [];
-    if (mouseX % side != 0 && mouseY % side != 0) {
-        x = Math.floor(mouseX / side);
-        y = Math.floor(mouseY / side);
+    if (clicked == true) {
+        var cordinates = [];
+        cordinates[0] = pers;
+        cordinates[1] = keyCode;
+        socket.emit("keyPress", cordinates);
     }
 
-    cordinates[0] = "keypress";
-    cordinates[1] = x;
-    cordinates[2] = y;
-    cordinates[3] = key;
-    cordinates[4] = keyCode;  
-    socket.emit("eventCordinat", cordinates);
 }
 
-
 function mousePressed() {
-    var cordinates = [];
-    if (mouseX % side != 0 && mouseY % side != 0) {
-        x = Math.floor(mouseX / side);
-        y = Math.floor(mouseY / side);
+    if (clicked == false) {
+        var cordinates = [];
+        if (mouseX % side != 0 && mouseY % side != 0) {
+            x = Math.floor(mouseX / side);
+            y = Math.floor(mouseY / side);
+        }
+        cordinates[0] = x;
+        cordinates[1] = y;
+        socket.emit("clickCordinat", cordinates);
     }
-    
-    cordinates[0] = "click";
-    cordinates[1] = x;
-    cordinates[2] = y;
-    socket.emit("eventCordinat", cordinates);
+
+    clicked = true;
 }
 
 function drawMatrix(matrix) {
@@ -73,6 +73,5 @@ function drawMatrix(matrix) {
         }
     }
 }
-
 
 socket.on('matrix', drawMatrix);

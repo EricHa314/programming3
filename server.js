@@ -2,7 +2,6 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-var fs = require('fs');
 
 app.use(express.static("."));
 app.get('/', function (req, res) {
@@ -35,16 +34,12 @@ matrix = genMatrix(w, h);
 var Grass = require("./classes/grass.js");
 var Xotaker = require("./classes/xotaker.js");
 var Gishatich = require("./classes/gishatich.js");
+var Man = require("./classes/man.js");
 var tact = 0;
 var season;
-var man = false;
-var man_x, man_y;
-var add_xotaker = 0;
-var add_gishatich = 0;
-var add_grass = 0;
-var add_del = 0;
-var man_teleport = 0;
-var stat = {added_xotaker:add_xotaker, added_grass:add_grass, added_gishatich:add_gishatich,deleted:add_del, man_teleported:man_teleport};
+manArr = [];
+var men_num = 0;
+var clients = [];
 
 for (var y in matrix) {
     for (var x in matrix[y]) {
@@ -61,15 +56,39 @@ for (var y in matrix) {
 }
 
 io.on('connection', function (socket) {
-    socket.on("eventCordinat", function (c) {
-        x = c[1];
-        y = c[2];
-        if (c[0] == "keypress") {
-            if (c[3] == "G" || c[3] == "X" || c[3] == "A" || c[3] == "D") {
+    clients.push(socket.id);
+    socket.on("keyPress", function (c) {
+        if (manArr[c[0]].isalive == true) {
+            if (c[1] == 37 || c[1] == 38 || c[1] == 39 || c[1] == 40) {
+                x = manArr[c[0]].x;
+                y = manArr[c[0]].y;
+                matrix[y][x] = 0;
+                if (c[1] == 38) {
+                    if (y > 0 && matrix[y - 1][x] != 4) {
+                        y--;
+                    }
+                }
+                else if (c[1] == 40) {
+                    if (y < h - 1 && matrix[y + 1][x] != 4) {
+                        y++;
+                    }
+                }
+                else if (c[1] == 39) {
+                    if (x < w - 1 && matrix[y][x + 1] != 4) {
+                        x++;
+                    }
+                }
+                else if (c[1] == 37) {
+                    if (x > 0 && matrix[y][x - 1] != 4) {
+                        x--;
+                    }
+                }
+
                 if (matrix[y][x] == 2) {
                     for (var i in xotakerArr) {
                         if (xotakerArr[i].x == this.x && xotakerArr[i].y == this.y) {
                             xotakerArr.splice(i, 1);
+                            manArr[c[0]].change_power(6);
                         }
                     }
                 }
@@ -77,6 +96,7 @@ io.on('connection', function (socket) {
                     for (var i in grassArr) {
                         if (grassArr[i].x == this.x && grassArr[i].y == this.y) {
                             grassArr.splice(i, 1);
+                            manArr[c[0]].change_power(1);
                         }
                     }
                 }
@@ -84,97 +104,22 @@ io.on('connection', function (socket) {
                     for (var i in gishatichArr) {
                         if (gishatichArr[i].x == this.x && gishatichArr[i].y == this.y) {
                             gishatichArr.splice(i, 1);
+                            manArr[c[0]].change_power(11);
                         }
                     }
-                }
-                else if (matrix[y][x] == 4) {
-                    man = false;
                 }
 
-                if (c[3] == "X") {
-                    matrix[y][x] = 2;
-                    xotakerArr.push(new Xotaker(x * 1, y * 1, 2));
-                    add_xotaker++;
-                }
-                else if (c[3] == "G") {
-                    matrix[y][x] = 3;
-                    gishatichArr.push(new Gishatich(x * 1, y * 1, 3));
-                    add_gishatich++;
-                }
-                else if (c[3] == "A") {
-                    matrix[y][x] = 1;
-                    grassArr.push(new Grass(x * 1, y * 1, 1));
-                    add_grass++;
-                }
-                else if (c[3] = "D") {
-                    matrix[y][x] = 0;
-                    add_del++;
-                }
-            }
-
-            if (c[4] == 37 || c[4] == 38 || c[4] == 39 || c[4] == 40) {
-                if (man == true) {
-                    x = man_x;
-                    y = man_y;
-                    matrix[y][x] = 0;
-                    if (c[4] == 38) {
-                        if (y > 0) {
-                            y--;
-                        }
-                    }
-                    else if (c[4] == 40) {
-                        if (y < h-1) {
-                            y++;
-                        }
-                    }
-                    else if (c[4] == 39) {
-                        if (x < w-1) {
-                            x++;
-                        }
-                    }
-                    else if (c[4] == 37) {
-                        if (x > 0) {
-                            x--;
-                        }
-                    }
-
-                    if (matrix[y][x] == 2) {
-                        for (var i in xotakerArr) {
-                            if (xotakerArr[i].x == this.x && xotakerArr[i].y == this.y) {
-                                xotakerArr.splice(i, 1);
-                            }
-                        }
-                    }
-                    else if (matrix[y][x] == 1) {
-                        for (var i in grassArr) {
-                            if (grassArr[i].x == this.x && grassArr[i].y == this.y) {
-                                grassArr.splice(i, 1);
-                            }
-                        }
-                    }
-                    else if (matrix[y][x] == 3) {
-                        for (var i in gishatichArr) {
-                            if (gishatichArr[i].x == this.x && gishatichArr[i].y == this.y) {
-                                gishatichArr.splice(i, 1);
-                            }
-                        }
-                    }
-
-                    matrix[y][x] = 4;
-                    man_x = x;
-                    man_y = y;
-                }
+                matrix[y][x] = 4;
+                manArr[c[0]].x = x;
+                manArr[c[0]].y = y;
             }
         }
-
-        else if (c[0] == "click") {
-            if (man == true) {
-                matrix[man_y][man_x] = 0;
-                man_teleport++;
-            }
-            x = c[1];
-            y = c[2];
-
+    });
+    socket.on("clickCordinat", function (c) {
+        x = c[0];
+        y = c[1];
+        if (matrix[y][x] != 4) {
+            manArr.push(new Man(x * 1, y * 1, men_num));
             if (matrix[y][x] == 2) {
                 for (var i in xotakerArr) {
                     if (xotakerArr[i].x == this.x && xotakerArr[i].y == this.y) {
@@ -198,14 +143,17 @@ io.on('connection', function (socket) {
             }
 
             matrix[y][x] = 4;
-            man = true;
-            man_x = x;
-            man_y = y;
+            socket.emit("persNum", men_num);
+            manArr[men_num].x = x;
+            manArr[men_num].y = y;
+            men_num++;
+        }
+
+        else {
+            socket.emit("no-pers");
         }
     });
 });
-
-
 
 function spring() {
     season = "spring";
@@ -249,15 +197,13 @@ function drawInServer() {
         gishatichArr[i].utel();
         gishatichArr[i].mahanal();
     }
-
+    for (var i in manArr) {
+        manArr[i].change_power(-1);
+        manArr[i].mahanal();
+    }
     io.sockets.emit("season", season);
     io.sockets.emit("matrix", matrix);
     tact++;
 }
 
-// function sendJSON(){
-//     JSON.stringify(stat);
-// }
-
 setInterval(drawInServer, 1000);
-setInterval(sendJSON, 5000);
