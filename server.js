@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var fs = require('fs');
 
 app.use(express.static("."));
 app.get('/', function (req, res) {
@@ -42,6 +43,8 @@ var add_xotaker = 0;
 var add_gishatich = 0;
 var add_grass = 0;
 var add_del = 0;
+var man_teleport = 0;
+var stat = {added_xotaker:add_xotaker, added_grass:add_grass, added_gishatich:add_gishatich,deleted:add_del, man_teleported:man_teleport};
 
 for (var y in matrix) {
     for (var x in matrix[y]) {
@@ -167,6 +170,7 @@ io.on('connection', function (socket) {
         else if (c[0] == "click") {
             if (man == true) {
                 matrix[man_y][man_x] = 0;
+                man_teleport++;
             }
             x = c[1];
             y = c[2];
@@ -251,4 +255,9 @@ function drawInServer() {
     tact++;
 }
 
+// function sendJSON(){
+//     JSON.stringify(stat);
+// }
+
 setInterval(drawInServer, 1000);
+setInterval(sendJSON, 5000);
