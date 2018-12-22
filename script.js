@@ -6,8 +6,13 @@ var backgroundcolor = "#acacac";
 var x, y;
 var clicked = false;
 var pers;
+
 socket.on("persNum", function (x) { pers = x; });
 socket.on("no-pers", function () { clicked = false });
+socket.on("p-power", function (x) { 
+    console.log(x);
+    document.getElementById('p').innerText = "power:"+x;
+});
 
 function sezon(season) {
     console.log(season);
@@ -52,6 +57,7 @@ function mousePressed() {
 }
 
 function drawMatrix(matrix) {
+    socket.emit("p-n", pers);
     for (y in matrix) {
         for (x in matrix[y]) {
             if (matrix[y][x] == 0) {

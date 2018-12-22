@@ -86,15 +86,16 @@ io.on('connection', function (socket) {
 
                 if (matrix[y][x] == 2) {
                     for (var i in xotakerArr) {
-                        if (xotakerArr[i].x == this.x && xotakerArr[i].y == this.y) {
+                        if (xotakerArr[i].x == manArr[c[0]].x && xotakerArr[i].y == manArr[c[0]].y) {
                             xotakerArr.splice(i, 1);
                             manArr[c[0]].change_power(6);
                         }
                     }
                 }
                 else if (matrix[y][x] == 1) {
+                    
                     for (var i in grassArr) {
-                        if (grassArr[i].x == this.x && grassArr[i].y == this.y) {
+                        if (grassArr[i].x == manArr[c[0]].x && grassArr[i].y == manArr[c[0]].y) {
                             grassArr.splice(i, 1);
                             manArr[c[0]].change_power(1);
                         }
@@ -102,7 +103,7 @@ io.on('connection', function (socket) {
                 }
                 else if (matrix[y][x] == 3) {
                     for (var i in gishatichArr) {
-                        if (gishatichArr[i].x == this.x && gishatichArr[i].y == this.y) {
+                        if (gishatichArr[i].x == manArr[c[0]].x && gishatichArr[i].y == manArr[c[0]].y) {
                             gishatichArr.splice(i, 1);
                             manArr[c[0]].change_power(11);
                         }
@@ -122,21 +123,21 @@ io.on('connection', function (socket) {
             manArr.push(new Man(x * 1, y * 1, men_num));
             if (matrix[y][x] == 2) {
                 for (var i in xotakerArr) {
-                    if (xotakerArr[i].x == this.x && xotakerArr[i].y == this.y) {
+                    if (xotakerArr[i].x == manArr[c[0]].x && xotakerArr[i].y == manArr[c[0]].y) {
                         xotakerArr.splice(i, 1);
                     }
                 }
             }
             else if (matrix[y][x] == 1) {
                 for (var i in grassArr) {
-                    if (grassArr[i].x == this.x && grassArr[i].y == this.y) {
+                    if (grassArr[i].x == manArr[c[0]].x && grassArr[i].y == manArr[c[0]].y) {
                         grassArr.splice(i, 1);
                     }
                 }
             }
             else if (matrix[y][x] == 3) {
                 for (var i in gishatichArr) {
-                    if (gishatichArr[i].x == this.x && gishatichArr[i].y == this.y) {
+                    if (gishatichArr[i].x == manArr[c[0]].x && gishatichArr[i].y == manArr[c[0]].y) {
                         gishatichArr.splice(i, 1);
                     }
                 }
@@ -151,6 +152,13 @@ io.on('connection', function (socket) {
 
         else {
             socket.emit("no-pers");
+        }
+    });
+
+    socket.on("p-n", function (x) {
+        if(manArr[x] && manArr[x].isalive == true)
+        {
+            socket.emit("p-power", manArr[x].power);
         }
     });
 });
