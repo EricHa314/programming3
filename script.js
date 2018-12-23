@@ -6,12 +6,11 @@ var backgroundcolor = "#acacac";
 var x, y;
 var clicked = false;
 var pers;
-
 socket.on("persNum", function (x) { pers = x; });
-socket.on("no-pers", function () { clicked = false });
-socket.on("p-power", function (x) { 
+socket.on("no-pers", function () { clicked = false; document.getElementById('p').innerText = "No pers"; });
+socket.on("p-power", function (x) {
     console.log(x);
-    document.getElementById('p').innerText = "power:"+x;
+    document.getElementById('p').innerText = "power:" + x;
 });
 
 function sezon(season) {
@@ -47,13 +46,12 @@ function mousePressed() {
         if (mouseX % side != 0 && mouseY % side != 0) {
             x = Math.floor(mouseX / side);
             y = Math.floor(mouseY / side);
+            cordinates[0] = x;
+            cordinates[1] = y;
+            socket.emit("clickCordinat", cordinates);
+            clicked = true;
         }
-        cordinates[0] = x;
-        cordinates[1] = y;
-        socket.emit("clickCordinat", cordinates);
     }
-
-    clicked = true;
 }
 
 function drawMatrix(matrix) {

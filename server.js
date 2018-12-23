@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var fs = require('fs');
 
 app.use(express.static("."));
 app.get('/', function (req, res) {
@@ -39,7 +40,9 @@ var tact = 0;
 var season;
 manArr = [];
 var men_num = 0;
-var clients = [];
+var pers_eat_gish = 0;
+var pers_eat_grass = 0;
+var pers_eat_xotaker = 0;
 
 for (var y in matrix) {
     for (var x in matrix[y]) {
@@ -56,9 +59,8 @@ for (var y in matrix) {
 }
 
 io.on('connection', function (socket) {
-    clients.push(socket.id);
     socket.on("keyPress", function (c) {
-        if (manArr[c[0]].isalive == true) {
+        if (manArr[c[0]] && manArr[c[0]].isalive == true) {
             if (c[1] == 37 || c[1] == 38 || c[1] == 39 || c[1] == 40) {
                 x = manArr[c[0]].x;
                 y = manArr[c[0]].y;
@@ -89,15 +91,17 @@ io.on('connection', function (socket) {
                         if (xotakerArr[i].x == manArr[c[0]].x && xotakerArr[i].y == manArr[c[0]].y) {
                             xotakerArr.splice(i, 1);
                             manArr[c[0]].change_power(6);
+                            pers_eat_xotaker++;
                         }
                     }
                 }
                 else if (matrix[y][x] == 1) {
-                    
+
                     for (var i in grassArr) {
                         if (grassArr[i].x == manArr[c[0]].x && grassArr[i].y == manArr[c[0]].y) {
                             grassArr.splice(i, 1);
                             manArr[c[0]].change_power(1);
+                            pers_eat_grass++;
                         }
                     }
                 }
@@ -106,6 +110,7 @@ io.on('connection', function (socket) {
                         if (gishatichArr[i].x == manArr[c[0]].x && gishatichArr[i].y == manArr[c[0]].y) {
                             gishatichArr.splice(i, 1);
                             manArr[c[0]].change_power(11);
+                            pers_eat_gish++;
                         }
                     }
                 }
@@ -123,21 +128,21 @@ io.on('connection', function (socket) {
             manArr.push(new Man(x * 1, y * 1, men_num));
             if (matrix[y][x] == 2) {
                 for (var i in xotakerArr) {
-                    if (xotakerArr[i].x == manArr[c[0]].x && xotakerArr[i].y == manArr[c[0]].y) {
+                    if (xotakerArr[i].x == x && xotakerArr[i].y == y) {
                         xotakerArr.splice(i, 1);
                     }
                 }
             }
             else if (matrix[y][x] == 1) {
                 for (var i in grassArr) {
-                    if (grassArr[i].x == manArr[c[0]].x && grassArr[i].y == manArr[c[0]].y) {
+                    if (grassArr[i].x == x && grassArr[i].y == y) {
                         grassArr.splice(i, 1);
                     }
                 }
             }
             else if (matrix[y][x] == 3) {
                 for (var i in gishatichArr) {
-                    if (gishatichArr[i].x == manArr[c[0]].x && gishatichArr[i].y == manArr[c[0]].y) {
+                    if (gishatichArr[i].x == x && gishatichArr[i].y == y) {
                         gishatichArr.splice(i, 1);
                     }
                 }
@@ -156,27 +161,70 @@ io.on('connection', function (socket) {
     });
 
     socket.on("p-n", function (x) {
-        if(manArr[x] && manArr[x].isalive == true)
-        {
+        if (manArr[x] && manArr[x].isalive == true) {
             socket.emit("p-power", manArr[x].power);
+        }
+
+        else if (manArr[x] && manArr[x].isalive == false) {
+            socket.emit("no-pers");
         }
     });
 });
 
 function spring() {
     season = "spring";
+    for (var i in grassArr) {
+        grassArr[i].mul();
+    }
+
+    for (var i in xotakerArr) {
+        xotakerArr[i].speed = 12;
+    }
+
+    for (var i in gishatichArr) {
+        gishatichArr[i].speed = 30;
+    }
 }
 
 function summer() {
     season = "summer";
+    for (var i in grassArr) {
+        grassArr[i].mul();
+    }
+
+    for (var i in xotakerArr) {
+        xotakerArr[i].speed = 8;
+    }
+
+    for (var i in gishatichArr) {
+        gishatichArr[i].speed = 24;
+    }
 }
 
 function autumn() {
     season = "autumn";
+    for (var i in grassArr) {
+        grassArr[i].mul();
+    }
+
+    for (var i in xotakerArr) {
+        xotakerArr[i].speed = 6;
+    }
+
+    for (var i in gishatichArr) {
+        gishatichArr[i].speed = 16;
+    }
 }
 
 function winter() {
     season = "winter";
+    for (var i in xotakerArr) {
+        xotakerArr[i].speed = 4;
+    }
+
+    for (var i in gishatichArr) {
+        gishatichArr[i].speed = 10;
+    }
 }
 
 function drawInServer() {
@@ -189,10 +237,6 @@ function drawInServer() {
         autumn();
     else
         winter();
-
-    for (var i in grassArr) {
-        grassArr[i].mul();
-    }
 
     for (var i in xotakerArr) {
         xotakerArr[i].bazmanal();
@@ -214,4 +258,29 @@ function drawInServer() {
     tact++;
 }
 
+function stat() {
+    var alive_pers_number = 0;
+    var dead_pers_number = 0;
+    var all_pers_number = manArr.length;
+    for (var i in manArr) {
+        if (manArr[i].isalive == true) {
+            alive_pers_number++;
+        }
+        else {
+            dead_pers_number++;
+        }
+    }
+
+    var obj = { alive_pers_number : alive_pers_number,
+                dead_pers_number : dead_pers_number,
+                all_pers_number : all_pers_number, 
+                pers_eat_gish : pers_eat_gish, 
+                pers_eat_grass : pers_eat_grass, 
+                pers_eat_xotaker : pers_eat_xotaker};
+    var myJSON = JSON.stringify(obj);
+    
+    fs.writeFileSync("statistics.json", myJSON+"\n");
+}
+
 setInterval(drawInServer, 1000);
+setInterval(stat, 5000)
