@@ -46,10 +46,13 @@ function mousePressed() {
         if (mouseX % side != 0 && mouseY % side != 0) {
             x = Math.floor(mouseX / side);
             y = Math.floor(mouseY / side);
-            cordinates[0] = x;
-            cordinates[1] = y;
-            socket.emit("clickCordinat", cordinates);
-            clicked = true;
+            if(x<=30 && y<=30)
+            {
+                cordinates[0] = x;
+                cordinates[1] = y;
+                socket.emit("clickCordinat", cordinates);
+                clicked = true;
+            }     
         }
     }
 }
